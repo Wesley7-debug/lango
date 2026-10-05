@@ -1,6 +1,6 @@
 {
   "name": "lango",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "description": "Simple, customizable website translation for React. Powered by Google. Built for developers.",
   "type": "module",
   "main": "./dist/index.js",
@@ -19,13 +19,16 @@
   "sideEffects": [
     "*.css"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react --out-dir dist && npm run build:css",
+    "build": "tsup src/index.ts --format esm,cjs --dts --external react --out-dir dist && node ./scripts/copy-css.mjs",
     "build:css": "node ./scripts/copy-css.mjs",
     "dev": "tsup src/index.ts --format esm,cjs --dts --external react --watch --out-dir dist",
     "test": "vitest run",

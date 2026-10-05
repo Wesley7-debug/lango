@@ -1,8 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Lango, LanguageSwitcher, useLango } from "lango";
 
 const GITHUB_URL = "https://github.com/Wesley7-debug/lango";
 const X_URL = "https://x.com/slycodez";
+
+/* --------------------------------- routing --------------------------------- */
+
+type Route = { page: "home" | "docs"; section: string | null };
+
+function readRoute(): Route {
+  const h = window.location.hash;
+  if (h.startsWith("#/docs")) {
+    const section = h.replace(/^#\/docs\/?/, "") || null;
+    return { page: "docs", section };
+  }
+  return { page: "home", section: null };
+}
+
+function useRoute(): Route {
+  const [route, setRoute] = useState<Route>(() =>
+    typeof window !== "undefined" ? readRoute() : { page: "home", section: null }
+  );
+
+  useEffect(() => {
+    const onChange = () => {
+      const next = readRoute();
+      setRoute(next);
+      if (next.page === "docs") {
+        // Docs page: top, or deep-link straight to a section.
+        window.scrollTo({ top: 0 });
+        if (next.section) {
+          requestAnimationFrame(() => {
+            document
+              .getElementById(next.section!)
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        }
+        return;
+      }
+      // Home: empty hash → top; anchor hash → scroll to it after render.
+      const id = window.location.hash.replace(/^#\/?/, "");
+      if (!id) {
+        window.scrollTo({ top: 0 });
+        return;
+      }
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      });
+    };
+    window.addEventListener("hashchange", onChange);
+    return () => window.removeEventListener("hashchange", onChange);
+  }, []);
+
+  return route;
+}
 
 /* ---------------------------------- bits ---------------------------------- */
 
@@ -20,7 +71,7 @@ function CopyButton({ text }: { text: string }) {
           () => setCopied(false)
         );
       }}
-      className="rounded-md border border-neutral-700 px-2.5 py-1 text-xs font-semibold text-neutral-400 transition hover:border-white hover:text-white"
+      className="rounded-md border border-neutral-700 px-2.5 py-1 text-xs font-semibold text-neutral-400 transition hover:border-stone-200 hover:text-stone-50"
     >
       {copied ? "Copied" : "Copy"}
     </button>
@@ -29,7 +80,7 @@ function CopyButton({ text }: { text: string }) {
 
 function Code({ title, children }: { title: string; children: string }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-black">
+    <div className="overflow-hidden rounded-2xl border border-neutral-800 bg-stone-900">
       <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-2.5">
         <span className="text-xs font-semibold tracking-wide text-neutral-400">{title}</span>
         <CopyButton text={children} />
@@ -44,10 +95,10 @@ function Code({ title, children }: { title: string; children: string }) {
 function DemoCard() {
   const { isTranslating } = useLango();
   return (
-    <div className="overflow-hidden rounded-3xl border-2 border-black bg-white shadow-[8px_8px_0_0_#09090b] dark:border-white dark:bg-black dark:shadow-[8px_8px_0_0_#fff]">
-      <div className="flex items-center justify-between gap-3 border-b-2 border-black px-5 py-3 dark:border-white">
+    <div className="overflow-hidden rounded-3xl border-2 border-stone-900 bg-stone-50 shadow-[8px_8px_0_0_#d6d3d1] dark:border-stone-200 dark:bg-stone-950 dark:shadow-[8px_8px_0_0_#78716c]">
+      <div className="flex items-center justify-between gap-3 border-b-2 border-stone-900 px-5 py-3 dark:border-stone-200">
         <span className="text-sm font-extrabold tracking-tight">Acme</span>
-        <LanguageSwitcher triggerClassName="!bg-black !text-white !border-black hover:!bg-neutral-800 dark:!bg-white dark:!text-black dark:!border-white" />
+        <LanguageSwitcher triggerClassName="!bg-stone-900 !text-stone-50 !border-stone-900 hover:!bg-neutral-800 dark:!bg-stone-50 dark:!text-stone-900 dark:!border-stone-200" />
       </div>
       <div className="px-6 py-8 sm:px-8">
         <h2 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
@@ -59,21 +110,21 @@ function DemoCard() {
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <a
-            href="#docs"
-            className="inline-flex items-center rounded-full bg-black px-6 py-2.5 text-sm font-bold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+            href="#/docs"
+            className="inline-flex items-center rounded-full bg-stone-900 px-6 py-2.5 text-sm font-bold text-stone-50 transition hover:bg-neutral-800 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-neutral-200"
           >
             Get Started
           </a>
           <a
-            href="#docs"
-            className="inline-flex items-center rounded-full border-2 border-black px-6 py-2.5 text-sm font-bold transition hover:bg-neutral-200/70 dark:border-white dark:hover:bg-neutral-800"
+            href="#/docs"
+            className="inline-flex items-center rounded-full border-2 border-stone-900 px-6 py-2.5 text-sm font-bold transition hover:bg-neutral-200/70 dark:border-stone-200 dark:hover:bg-neutral-800"
           >
             Learn more
           </a>
         </div>
         {isTranslating && (
           <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
-            <span className="h-3 w-3 animate-spin rounded-full border-2 border-neutral-300 border-t-black dark:border-t-white" />
+            <span className="h-3 w-3 animate-spin rounded-full border-2 border-neutral-300 border-t-stone-500" />
             Translating…
           </p>
         )}
@@ -131,7 +182,7 @@ function DocSection({
 
 function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border-2 border-black bg-neutral-50 p-5 text-sm text-black dark:border-white dark:bg-neutral-950 dark:text-white">
+    <div className="rounded-2xl border-2 border-stone-900 bg-neutral-50 p-5 text-sm text-stone-900 dark:border-stone-200 dark:bg-neutral-950 dark:text-stone-100">
       {children}
     </div>
   );
@@ -151,7 +202,7 @@ function DocTable({ rows }: { rows: [string, string, string][] }) {
         <tbody className="divide-y divide-neutral-200 dark:divide-neutral-800">
           {rows.map(([prop, def, desc]) => (
             <tr key={prop}>
-              <td className="px-5 py-3 font-mono font-bold text-black dark:text-white">{prop}</td>
+              <td className="px-5 py-3 font-mono font-bold text-stone-900 dark:text-stone-100">{prop}</td>
               <td className="px-5 py-3 font-mono text-neutral-500">{def}</td>
               <td className="px-5 py-3">{desc}</td>
             </tr>
@@ -180,8 +231,8 @@ function App() {
 const TAILWIND_STYLE = `// Override with your own Tailwind utilities
 <LanguageSwitcher
   className="font-sans"
-  triggerClassName="bg-black text-white border-black hover:bg-neutral-800"
-  menuClassName="rounded-2xl border-black"
+  triggerClassName="bg-stone-900 text-stone-50 border-stone-900 hover:bg-neutral-800"
+  menuClassName="rounded-2xl border-stone-900"
   optionClassName="hover:bg-neutral-100"
 />
 
@@ -233,12 +284,12 @@ const myProvider: TranslationProvider = {
 </Lango>`;
 
 const CSS_VARIABLES = `:root {
-  --lango-background: #fff;
-  --lango-foreground: #09090b;
-  --lango-border: #e4e4e7;
+  --lango-background: #fafaf9;
+  --lango-foreground: #1c1917;
+  --lango-border: #e7e5e4;
   --lango-radius: 12px;
-  --lango-option-hover: #f4f4f5;
-  --lango-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  --lango-option-hover: #f5f5f4;
+  --lango-shadow: 0 8px 30px rgba(28, 25, 23, 0.08);
   --lango-font-size: 14px;
 }`;
 
@@ -273,59 +324,77 @@ const TOC = [
   ["troubleshooting", "Troubleshooting"],
 ];
 
-export default function App() {
+function SiteHeader() {
   return (
-    <Lango languages={["en", "fr", "es", "de", "pt"]} defaultLanguage="en">
-      <div className="min-h-screen bg-[#f6f5f1] font-sans text-black antialiased dark:bg-black dark:text-white">
-        {/* Header */}
-        <header className="sticky top-0 z-30 border-b border-neutral-200 bg-[#f6f5f1]/85 backdrop-blur-md dark:border-neutral-800 dark:bg-black/85">
-          <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
-            <a href="#" className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-sm font-extrabold text-white dark:bg-white dark:text-black">
-                L
-              </span>
-              <span className="text-lg font-extrabold tracking-tight">LANGO</span>
-            </a>
-            <nav className="ml-4 hidden items-center gap-1 text-sm font-medium sm:flex">
-              <a
-                href="#demo"
-                className="rounded-full px-3 py-1.5 text-neutral-600 transition hover:bg-neutral-200/70 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"
-              >
-                Demo
-              </a>
-              <a
-                href="#docs"
-                className="rounded-full px-3 py-1.5 text-neutral-600 transition hover:bg-neutral-200/70 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"
-              >
-                Docs
-              </a>
-              <a
-                href={GITHUB_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full px-3 py-1.5 text-neutral-600 transition hover:bg-neutral-200/70 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-white"
-              >
-                GitHub
-              </a>
-            </nav>
-            <div className="ml-auto flex items-center gap-2">
-              <ThemeToggle />
-              <LanguageSwitcher />
-            </div>
-          </div>
-        </header>
+    <header className="sticky top-0 z-30 border-b border-neutral-200 bg-[#f6f5f1]/85 backdrop-blur-md dark:border-neutral-800 dark:bg-stone-950/85">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-4 px-6">
+        <a href="#/" className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-stone-900 text-sm font-extrabold text-stone-50 dark:bg-stone-100 dark:text-stone-900">
+            L
+          </span>
+          <span className="text-lg font-extrabold tracking-tight">LANGO</span>
+        </a>
+        <nav className="ml-4 hidden items-center gap-1 text-sm font-medium sm:flex">
+          <a
+            href="#demo"
+            className="rounded-full px-3 py-1.5 text-neutral-600 transition hover:bg-neutral-200/70 hover:text-stone-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-stone-50"
+          >
+            Demo
+          </a>
+          <a
+            href="#/docs"
+            className="rounded-full px-3 py-1.5 text-neutral-600 transition hover:bg-neutral-200/70 hover:text-stone-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-stone-50"
+          >
+            Docs
+          </a>
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-full px-3 py-1.5 text-neutral-600 transition hover:bg-neutral-200/70 hover:text-stone-900 dark:text-neutral-400 dark:hover:bg-neutral-900 dark:hover:text-stone-50"
+          >
+            GitHub
+          </a>
+        </nav>
+        <div className="ml-auto flex items-center gap-2">
+          <ThemeToggle />
+          <LanguageSwitcher />
+        </div>
+      </div>
+    </header>
+  );
+}
 
-        <main className="mx-auto max-w-6xl px-6">
+function SiteFooter() {
+  return (
+    <footer className="mt-10 border-t-2 border-stone-900 dark:border-stone-200">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-8 text-sm">
+        <span className="font-extrabold tracking-tight">LANGO v1.2.0 — MIT</span>
+        <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4">
+          GitHub
+        </a>
+        <a href={X_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4">
+          Made by @slycodez
+        </a>
+        <span className="ml-auto text-neutral-500">Translations by Google</span>
+      </div>
+    </footer>
+  );
+}
+
+function HomePage() {
+  return (
+    <main className="mx-auto max-w-6xl px-6">
           {/* Hero */}
           <section className="pb-10 pt-16 text-center sm:pt-24">
-            <p className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 py-1.5 text-xs font-bold uppercase tracking-widest dark:border-neutral-700 dark:bg-black">
-              <span className="h-2 w-2 rounded-full bg-black dark:bg-white" />
-              v0.1.0 — Powered by Google
+            <p className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-stone-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest dark:border-neutral-700 dark:bg-stone-950">
+              <span className="h-2 w-2 rounded-full bg-stone-900 dark:bg-stone-100" />
+              v1.2.0 — Powered by Google
             </p>
             <h1 className="mx-auto mt-6 max-w-4xl text-5xl font-extrabold leading-[1.02] tracking-tight sm:text-7xl">
               Translate your website.
               <br />
-              <span className="bg-black text-white dark:bg-white dark:text-black">
+              <span className="bg-stone-900 text-stone-50 dark:bg-stone-100 dark:text-stone-900">
                 &nbsp;Keep your UI.&nbsp;
               </span>
             </h1>
@@ -335,8 +404,8 @@ export default function App() {
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
               <a
-                href="#docs"
-                className="inline-flex items-center rounded-full bg-black px-8 py-3 text-sm font-bold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+                href="#/docs"
+                className="inline-flex items-center rounded-full bg-stone-900 px-8 py-3 text-sm font-bold text-stone-50 transition hover:bg-neutral-800 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-neutral-200"
               >
                 Read the Docs
               </a>
@@ -344,7 +413,7 @@ export default function App() {
                 href={GITHUB_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center rounded-full border-2 border-black px-8 py-3 text-sm font-bold transition hover:bg-neutral-200/70 dark:border-white dark:hover:bg-neutral-800"
+                className="inline-flex items-center rounded-full border-2 border-stone-900 px-8 py-3 text-sm font-bold transition hover:bg-neutral-200/70 dark:border-stone-200 dark:hover:bg-neutral-800"
               >
                 ★ Star on GitHub
               </a>
@@ -368,7 +437,7 @@ export default function App() {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="rounded-3xl border-2 border-black bg-white p-7 transition hover:-translate-y-1 hover:shadow-[6px_6px_0_0_#09090b] dark:border-white dark:bg-black dark:hover:shadow-[6px_6px_0_0_#fff]"
+                className="rounded-3xl border-2 border-stone-900 bg-stone-50 p-7 transition hover:-translate-y-1 hover:shadow-[6px_6px_0_0_#d6d3d1] dark:border-stone-200 dark:bg-stone-950 dark:hover:shadow-[6px_6px_0_0_#78716c]"
               >
                 <h3 className="text-lg font-extrabold tracking-tight">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
@@ -378,21 +447,105 @@ export default function App() {
             ))}
           </section>
 
-          {/* Docs — one whole page */}
-          <section id="docs" className="scroll-mt-24 py-10">
-            <p className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-              Documentation
-            </p>
-            <h2 className="mt-2 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-5xl">
-              Everything you need, on one page.
-            </h2>
-            <p className="mt-4 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
-              This is the full Lango manual — from install to custom translation backends. Read
-              it top to bottom, or jump to whatever you need. Every example on this page is
-              copy-paste ready.
-            </p>
+      {/* Docs intro — the full manual lives on its own page */}
+      <section className="py-10">
+        <p className="text-xs font-bold uppercase tracking-widest text-neutral-500">
+          Documentation
+        </p>
+        <h2 className="mt-2 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-5xl">
+          Short to start, deep when you need it.
+        </h2>
+        <p className="mt-4 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
+          The full Lango manual lives on its own page — nine sections from install to custom
+          translation backends, every example copy-paste ready. Here is the map:
+        </p>
 
-            <div className="mt-12 grid gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              title: "Start here",
+              body: "Install, wrap your app, and understand what happens when you switch.",
+              links: [
+                ["installation", "Installation"],
+                ["quick-start", "Quick start"],
+                ["how-it-works", "How it works"],
+              ],
+            },
+            {
+              title: "Make it yours",
+              body: "Configure props, restyle with Tailwind, or build your own UI.",
+              links: [
+                ["configuration", "Configuration"],
+                ["styling", "Styling with Tailwind"],
+                ["headless", "Headless UI"],
+              ],
+            },
+            {
+              title: "Go further",
+              body: "Custom backends, persistence rules, and fixing real-world issues.",
+              links: [
+                ["providers", "Custom providers"],
+                ["persistence", "Persistence"],
+                ["troubleshooting", "Troubleshooting"],
+              ],
+            },
+          ].map((group) => (
+            <div
+              key={group.title}
+              className="flex flex-col rounded-3xl border-2 border-stone-900 bg-stone-50 p-6 dark:border-stone-200 dark:bg-stone-950"
+            >
+              <h3 className="text-base font-extrabold tracking-tight">{group.title}</h3>
+              <p className="mt-1.5 text-sm text-neutral-600 dark:text-neutral-400">{group.body}</p>
+              <ul className="mt-4 space-y-1.5 text-sm font-semibold">
+                {group.links.map(([id, label]) => (
+                  <li key={id}>
+                    <a
+                      href={`#/docs/${id}`}
+                      className="underline underline-offset-4 decoration-neutral-300 transition hover:decoration-stone-900 dark:decoration-neutral-700 dark:hover:decoration-stone-100"
+                    >
+                      {label} →
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <a
+          href="#/docs"
+          className="mt-8 inline-flex items-center rounded-full bg-stone-900 px-8 py-3 text-sm font-bold text-stone-50 transition hover:bg-neutral-800 dark:bg-stone-100 dark:text-stone-900 dark:hover:bg-neutral-200"
+        >
+          Read the full documentation →
+        </a>
+      </section>
+    </main>
+  );
+}
+
+function DocsPage() {
+  return (
+    <main className="mx-auto max-w-6xl px-6">
+      <section className="py-10 sm:py-14">
+        <a
+          href="#/"
+          className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 px-3.5 py-1.5 text-sm font-semibold transition hover:bg-neutral-200/70 dark:border-neutral-700 dark:hover:bg-neutral-800"
+        >
+          ← Back to home
+        </a>
+        <p className="mt-8 text-xs font-bold uppercase tracking-widest text-neutral-500">
+          Documentation
+        </p>
+        <h2 className="mt-2 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-5xl">
+          Everything you need, on one page.
+        </h2>
+        <p className="mt-4 max-w-2xl text-lg text-neutral-600 dark:text-neutral-400">
+          This is the full Lango manual — from install to custom translation backends. Read
+          it top to bottom, or jump to whatever you need. Every example on this page is
+          copy-paste ready.
+        </p>
+
+        <div className="mt-12 grid gap-10 lg:grid-cols-[220px_minmax(0,1fr)]">
               {/* TOC */}
               <aside className="lg:sticky lg:top-24 lg:self-start">
                 <p className="mb-3 hidden text-xs font-bold uppercase tracking-widest text-neutral-400 lg:block">
@@ -402,8 +555,8 @@ export default function App() {
                   {TOC.map(([id, label], i) => (
                     <a
                       key={id}
-                      href={`#${id}`}
-                      className="shrink-0 rounded-full border border-neutral-300 px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap transition hover:bg-neutral-200/70 lg:border-0 lg:px-3 lg:py-1.5 lg:text-left lg:font-medium lg:text-neutral-500 lg:hover:bg-neutral-200/70 lg:hover:text-black dark:border-neutral-700 dark:hover:bg-neutral-800 lg:dark:hover:bg-neutral-900 lg:dark:hover:text-white"
+                      href={`#/docs/${id}`}
+                      className="shrink-0 rounded-full border border-neutral-300 px-3.5 py-1.5 text-sm font-semibold whitespace-nowrap transition hover:bg-neutral-200/70 lg:border-0 lg:px-3 lg:py-1.5 lg:text-left lg:font-medium lg:text-neutral-500 lg:hover:bg-neutral-200/70 lg:hover:text-stone-900 dark:border-neutral-700 dark:hover:bg-neutral-800 lg:dark:hover:bg-neutral-900 lg:dark:hover:text-stone-50"
                     >
                       <span className="mr-1.5 font-mono text-xs opacity-50">{i + 1}</span>
                       {label}
@@ -417,7 +570,7 @@ export default function App() {
                 <DocSection id="installation" index="01" title="Installation">
                   <p>
                     Lango ships as a single npm package with zero runtime dependencies — just
-                    React itself. It needs <strong className="font-bold text-black dark:text-white">React 16.8 or newer</strong> (hooks),
+                    React itself. It needs <strong className="font-bold text-stone-900 dark:text-stone-100">React 16.8 or newer</strong> (hooks),
                     and works with or without Tailwind in your project. Tailwind is purely
                     optional: the switcher looks finished out of the box, and Tailwind classes
                     simply give you a nicer way to restyle it.
@@ -426,10 +579,10 @@ export default function App() {
                   <p>
                     That is the entire install. There is no CLI to run, no config file to create,
                     no API key to paste, and — importantly —{" "}
-                    <strong className="font-bold text-black dark:text-white">no stylesheet to import</strong>.
+                    <strong className="font-bold text-stone-900 dark:text-stone-100">no stylesheet to import</strong>.
                     Older versions of Lango asked you to add{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">import "lango/styles.css"</code>,
-                    but that step is gone: the <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">&lt;Lango&gt;</code> provider
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">import "lango/styles.css"</code>,
+                    but that step is gone: the <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">&lt;Lango&gt;</code> provider
                     injects its default styles automatically the first time it mounts. If you still
                     have the old import lying around, it is harmless — but you can safely delete it.
                   </p>
@@ -438,8 +591,8 @@ export default function App() {
                 <DocSection id="quick-start" index="02" title="Quick start">
                   <p>
                     The fastest way to understand Lango is the three-line version: wrap your app in
-                    the <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">Lango</code> provider,
-                    drop a <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">LanguageSwitcher</code> wherever
+                    the <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">Lango</code> provider,
+                    drop a <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">LanguageSwitcher</code> wherever
                     you want it, and you are done. Switching languages in the dropdown translates
                     the whole page in place — your layout, your components, your routing all stay
                     exactly as they are.
@@ -447,11 +600,11 @@ export default function App() {
                   <Code title="App.tsx">{QUICK_START}</Code>
                   <p>
                     A few things worth noticing here. First,{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">languages</code> is
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">languages</code> is
                     the list of languages your site offers, and it must contain at least one code —
                     Lango throws a clear error otherwise, because a translator with no languages is
-                    almost certainly a bug. Second, <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">defaultLanguage</code> (which
-                    falls back to <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">"en"</code>) is
+                    almost certainly a bug. Second, <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">defaultLanguage</code> (which
+                    falls back to <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">"en"</code>) is
                     the language your content is actually written in. Lango uses it as the source
                     language for translation and as the fallback whenever a saved or detected
                     language is not in your list. Third, the switcher can live anywhere inside the
@@ -469,7 +622,7 @@ export default function App() {
                 <DocSection id="how-it-works" index="03" title="How it works">
                   <p>
                     There is no magic here, and that is deliberate. Under the hood, Lango drives
-                    the official <strong className="font-bold text-black dark:text-white">Google Translate Element</strong> —
+                    the official <strong className="font-bold text-stone-900 dark:text-stone-100">Google Translate Element</strong> —
                     the same no-key, client-side website translator Google itself offers. When your
                     app mounts, Lango loads Google's script, creates the Translate Element in a
                     hidden container, and then translates pages by driving the widget's own language
@@ -478,17 +631,17 @@ export default function App() {
                     your frontend bundle.
                   </p>
                   <p>
-                    Concretely, calling <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">setLanguage("fr")</code> does
+                    Concretely, calling <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">setLanguage("fr")</code> does
                     roughly this, in order: it updates React state immediately (so your switcher
                     label flips to <em>Français</em> without waiting), persists the choice to{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">localStorage</code>,
-                    sets <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">isTranslating</code> to{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">true</code> so
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">localStorage</code>,
+                    sets <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">isTranslating</code> to{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">true</code> so
                     you can show a spinner, and then asks the provider to translate. The default
                     provider waits for the Google widget to be ready, sets its language, and
-                    resolves — at which point <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">isTranslating</code> flips
+                    resolves — at which point <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">isTranslating</code> flips
                     back to false. If anything fails (offline, blocked script), the promise rejects,
-                    Lango stores the error in <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">error</code>,
+                    Lango stores the error in <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">error</code>,
                     and your original content stays put — the app never crashes, never blanks.
                   </p>
                   <p>
@@ -543,27 +696,27 @@ export default function App() {
                     have three layers of control, from quickest to most total.
                   </p>
                   <p>
-                    <strong className="font-bold text-black dark:text-white">Layer one is Tailwind props.</strong> Pass
+                    <strong className="font-bold text-stone-900 dark:text-stone-100">Layer one is Tailwind props.</strong> Pass
                     utilities straight into the trigger, menu, or individual options. Because these
                     are merged on top of the defaults, you only specify what you want to change —
                     a black trigger is literally one prop.
                   </p>
                   <Code title="styling.tsx">{TAILWIND_STYLE}</Code>
                   <p>
-                    <strong className="font-bold text-black dark:text-white">Layer two is CSS variables.</strong> If
+                    <strong className="font-bold text-stone-900 dark:text-stone-100">Layer two is CSS variables.</strong> If
                     you prefer tokens over utilities, every color, radius, and shadow the switcher
-                    uses is a <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">--lango-*</code> variable
+                    uses is a <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">--lango-*</code> variable
                     you can redefine once in your own stylesheet. Class names are stable
-                    (<code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">.lango-switcher</code>,{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">.lango-trigger</code>,{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">.lango-menu</code>,{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">.lango-option</code>, …),
+                    (<code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">.lango-switcher</code>,{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">.lango-trigger</code>,{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">.lango-menu</code>,{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">.lango-option</code>, …),
                     so plain-CSS overrides keep working across upgrades.
                   </p>
                   <Code title="tokens.css">{CSS_VARIABLES}</Code>
                   <p>
-                    <strong className="font-bold text-black dark:text-white">Layer three is the eject hatch.</strong> Set{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">window.__LANGO_NO_AUTO_CSS__ = true</code> before
+                    <strong className="font-bold text-stone-900 dark:text-stone-100">Layer three is the eject hatch.</strong> Set{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">window.__LANGO_NO_AUTO_CSS__ = true</code> before
                     mounting and Lango injects nothing at all — every pixel comes from your CSS.
                     This is the right choice if you are building a strict design-system wrapper and
                     want zero competing styles.
@@ -573,24 +726,24 @@ export default function App() {
                 <DocSection id="headless" index="06" title="Headless UI">
                   <p>
                     Sometimes a dropdown is not what you want — maybe a native{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">&lt;select&gt;</code> in
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">&lt;select&gt;</code> in
                     a settings form, a row of pill buttons, or an entry in a command palette. That
-                    is what <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">useLango()</code> is
+                    is what <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">useLango()</code> is
                     for: the complete headless API over the same provider state. It returns the
-                    current <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">language</code>, the{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">languages</code> list,{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">setLanguage</code>, plus{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">isTranslating</code> and{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">error</code> so
+                    current <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">language</code>, the{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">languages</code> list,{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">setLanguage</code>, plus{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">isTranslating</code> and{" "}
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">error</code> so
                     custom UIs can show loading and failure states just like the built-in switcher
-                    does. It must be called inside <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">&lt;Lango&gt;</code> —
+                    does. It must be called inside <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">&lt;Lango&gt;</code> —
                     outside of it, it throws a helpful error instead of silently returning garbage.
                   </p>
                   <Code title="CustomSelector.tsx">{HEADLESS_SELECT}</Code>
                   <p>
                     The same hook powers richer patterns too. Here is a button group that disables
                     itself mid-translation and marks the active language for assistive technology
-                    with <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">aria-pressed</code> —
+                    with <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">aria-pressed</code> —
                     a nice little accessibility win that costs one attribute.
                   </p>
                   <Code title="LanguageButtons.tsx">{HEADLESS_BUTTONS}</Code>
@@ -601,10 +754,10 @@ export default function App() {
                     The Google Translate Element is a wonderful default — free, keyless, instant —
                     but some teams need something else: paid Cloud Translation quality, a fully
                     offline dictionary, or content that must never touch a third party. Lango
-                    handles that with the <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">TranslationProvider</code> interface:
-                    any object with an async <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">translate(language)</code> method
-                    (plus an optional <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">dispose()</code>).
-                    Pass it as <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">provider</code> and
+                    handles that with the <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">TranslationProvider</code> interface:
+                    any object with an async <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">translate(language)</code> method
+                    (plus an optional <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">dispose()</code>).
+                    Pass it as <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">provider</code> and
                     everything else — state, persistence, switcher UI, loading and error states —
                     keeps working unchanged.
                   </p>
@@ -612,7 +765,7 @@ export default function App() {
                   <p>
                     The canonical example is Google's Cloud Translation API, which — unlike the
                     Element — requires a billed API key. That key must live on{" "}
-                    <strong className="font-bold text-black dark:text-white">your server</strong>, never
+                    <strong className="font-bold text-stone-900 dark:text-stone-100">your server</strong>, never
                     in the frontend bundle where anyone could extract it. So your provider becomes
                     a thin client over your own endpoint: it POSTs the target language, your server
                     calls Google with the secret key, and returns translated content. Lango never
@@ -624,12 +777,12 @@ export default function App() {
                   <p>
                     Returning visitors should not have to re-pick their language, so Lango resolves
                     the starting language with a simple, predictable priority. First it checks{" "}
-                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">localStorage["lango-language"]</code> —
+                    <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">localStorage["lango-language"]</code> —
                     an explicit past choice always wins. If there is none (or it names a language
                     you no longer offer), it looks at the browser's preferred languages and picks
-                    the first one present in your <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">languages</code> list.
-                    Otherwise it falls back to <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">defaultLanguage</code>.
-                    Set <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-black dark:bg-neutral-900 dark:text-white">persistLanguage={`false`}</code> to
+                    the first one present in your <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">languages</code> list.
+                    Otherwise it falls back to <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">defaultLanguage</code>.
+                    Set <code className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[13px] text-stone-900 dark:bg-neutral-900 dark:text-stone-100">persistLanguage={`false`}</code> to
                     opt out of storage entirely — useful for incognito-style experiences or demos.
                     On mount, if the resolved language differs from the page language, Lango
                     translates to it automatically, so a French visitor lands on French content with
@@ -661,7 +814,7 @@ export default function App() {
                         key={title}
                         className="rounded-2xl border border-neutral-200 p-5 dark:border-neutral-800"
                       >
-                        <p className="font-bold text-black dark:text-white">{title}</p>
+                        <p className="font-bold text-stone-900 dark:text-stone-100">{title}</p>
                         <p className="mt-1.5 text-sm">{body}</p>
                       </div>
                     ))}
@@ -670,21 +823,18 @@ export default function App() {
               </div>
             </div>
           </section>
-        </main>
+    </main>
+  );
+}
 
-        {/* Footer */}
-        <footer className="mt-10 border-t-2 border-black dark:border-white">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-6 gap-y-2 px-6 py-8 text-sm">
-            <span className="font-extrabold tracking-tight">LANGO v0.1.0 — MIT</span>
-            <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4">
-              GitHub
-            </a>
-            <a href={X_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-4">
-              Made by @slycodez
-            </a>
-            <span className="ml-auto text-neutral-500">Translations by Google</span>
-          </div>
-        </footer>
+export default function App() {
+  const route = useRoute();
+  return (
+    <Lango languages={["en", "fr", "es", "de", "pt"]} defaultLanguage="en">
+      <div className="min-h-screen bg-[#f6f5f1] font-sans text-stone-900 antialiased dark:bg-stone-950 dark:text-stone-100">
+        <SiteHeader />
+        {route.page === "docs" ? <DocsPage /> : <HomePage />}
+        <SiteFooter />
       </div>
     </Lango>
   );

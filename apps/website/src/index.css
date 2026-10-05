@@ -23,8 +23,8 @@ body {
 }
 
 ::selection {
-  background: #09090b;
-  color: #fff;
+  background: #1c1917;
+  color: #fafaf9;
 }
 
 /* Thin monochrome scrollbar for code blocks */
