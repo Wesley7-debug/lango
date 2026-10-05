@@ -1,0 +1,8 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "/^New-Item -ItemType Directory -Force -Path \"c:\\\\Users\\\\fidel\\\\lango\\\\apps\\\\website\\\\src\\\\components\", \"c:\\\\Users\\\\fidel\\\\lango\\\\apps\\\\website\\\\src\\\\pages\" \\| Select-Object FullName$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
+}
