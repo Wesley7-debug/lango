@@ -1,0 +1,60 @@
+# CI verifies the ONE build/test process under every supported package
+# manager. npm is the repo's development manager (package-lock.json);
+# pnpm / Yarn / Bun consume the same scripts - no PM-specific logic anywhere.
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build --workspace=lango-i18n
+      - run: npm run test --workspace=lango-i18n
+      - run: npm run build --workspace=lango-website
+      - run: npm pack --dry-run --workspace=lango-i18n
+
+  pnpm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: pnpm install
+      - run: pnpm --filter lango-i18n build
+      - run: pnpm --filter lango-i18n test
+
+  yarn:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: yarn install
+      - run: yarn workspace lango-i18n build
+      - run: yarn workspace lango-i18n test
+
+  bun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install
+      - run: bun run build --workspace=lango-i18n
+      - run: bun run test --workspace=lango-i18n

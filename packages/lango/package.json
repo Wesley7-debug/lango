@@ -1,5 +1,5 @@
 {
-  "name": "lango",
+  "name": "lango-i18n",
   "version": "1.2.0",
   "description": "Simple, customizable website translation for React. Powered by Google. Built for developers.",
   "type": "module",
@@ -28,8 +28,8 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react --out-dir dist && node ./scripts/copy-css.mjs",
-    "build:css": "node ./scripts/copy-css.mjs",
+    "build": "tsup src/index.ts --format esm,cjs --dts --external react --out-dir dist && node ./scripts/build-css.mjs",
+    "build:css": "node ./scripts/build-css.mjs",
     "dev": "tsup src/index.ts --format esm,cjs --dts --external react --watch --out-dir dist",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -62,7 +62,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lango-dev/lango.git"
+    "url": "git+https://github.com/Wesley7-debug/lango.git"
   },
-  "homepage": "https://github.com/lango-dev/lango#readme"
+  "homepage": "https://github.com/Wesley7-debug/lango#readme"
 }

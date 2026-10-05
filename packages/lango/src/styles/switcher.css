@@ -1,10 +1,7 @@
-/* Lango default stylesheet — OPTIONAL legacy import.
-   `<Lango>` auto-injects these styles at runtime, so you do NOT need:
-     import "lango/styles.css";
-   Keep the import only if you disabled auto-injection or want the CSS
-   bundled by your own pipeline. Restyle with Tailwind via the
-   className / triggerClassName / menuClassName / optionClassName props,
-   or override the --lango-* variables / .lango-* classes below. */
+/* Lango switcher styles (one half of the default stylesheet).
+   Optional legacy import - `<Lango>` auto-injects these at runtime.
+   Source of truth: edit this file, then run `npm run build:css`
+   to regenerate `cssText.ts` + `dist/lango.css`. */
 
 :root {
   --lango-background: #fff;
@@ -128,38 +125,6 @@
   font-size: 11px;
   opacity: 0.55;
   cursor: default;
-}
-
-/* ---- Google Translate Element: documented CSS customization ----
-   The widget stays in the DOM (required) but Lango provides the UI.
-   These rules use Google's own documented customization approach:
-   keep the element functional while removing layout disruption. */
-.lango-google-element {
-  position: absolute !important;
-  top: -9999px;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-body {
-  top: 0 !important;
-}
-
-.goog-te-banner-frame,
-.goog-te-balloon-frame {
-  display: none !important;
-}
-
-.goog-te-gadget {
-  font-size: 0 !important;
-}
-
-.skiptranslate > iframe {
-  display: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

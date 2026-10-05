@@ -1,54 +1,12 @@
 /**
  * Lango default stylesheet, injected automatically at runtime.
  *
+ * GENERATED - do not edit. Edit src/styles/switcher.css or
+ * src/styles/google-element.css, then run `npm run build:css`.
+ *
  * You do NOT need to import any CSS. `<Lango>` injects this once
  * (guarded by `#lango-styles`) so the switcher looks good out of the box.
- *
- * Tailwind users: every element also carries Tailwind utility classes and
- * stable `lango-*` class names, plus `className` / `triggerClassName` /
- * `menuClassName` / `optionClassName` overrides — so you can restyle
- * everything with your own utilities without touching this file.
- *
- * To opt out of auto-injection (full manual control):
- *   window.__LANGO_NO_AUTO_CSS__ = true
- * ...before mounting, and style `.lango-*` yourself or via Tailwind.
+ * To opt out: `window.__LANGO_NO_AUTO_CSS__ = true` before mounting.
  */
 
-export const LANGO_CSS = `
-:root {
-  --lango-background: #fff;
-  --lango-foreground: #09090b;
-  --lango-border: #e4e4e7;
-  --lango-radius: 12px;
-  --lango-option-hover: #f4f4f5;
-  --lango-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  --lango-font-size: 14px;
-}
-.lango-switcher { position: relative; display: inline-block; font-size: var(--lango-font-size); color: var(--lango-foreground); }
-.lango-trigger { display: inline-flex; align-items: center; gap: 8px; background: var(--lango-background); color: var(--lango-foreground); border: 1px solid var(--lango-border); border-radius: 999px; padding: 8px 14px; cursor: pointer; font: inherit; line-height: 1.2; }
-.lango-trigger:hover { background: var(--lango-option-hover); }
-.lango-trigger:focus-visible { outline: 2px solid #09090b; outline-offset: 2px; }
-.lango-trigger-icon { font-size: 0.8em; opacity: 0.6; }
-.lango-menu { position: absolute; z-index: 50; top: calc(100% + 6px); left: 0; min-width: 200px; max-width: min(280px, 90vw); max-height: 320px; overflow: auto; margin: 0; padding: 6px; list-style: none; background: var(--lango-background); color: var(--lango-foreground); border: 1px solid var(--lango-border); border-radius: var(--lango-radius); box-shadow: var(--lango-shadow); }
-.lango-option { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: calc(var(--lango-radius) - 4px); cursor: pointer; }
-.lango-option:hover { background: var(--lango-option-hover); }
-.lango-option:focus-visible { outline: 2px solid #09090b; outline-offset: -2px; }
-.lango-option-active { font-weight: 600; }
-.lango-flag { font-size: 1.1em; line-height: 1; }
-.lango-language-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lango-check { opacity: 0.7; }
-.lango-spinner { width: 12px; height: 12px; border: 2px solid var(--lango-border); border-top-color: currentColor; border-radius: 50%; animation: lango-spin 0.8s linear infinite; }
-@keyframes lango-spin { to { transform: rotate(360deg); } }
-.lango-attribution { padding: 8px 12px 4px; font-size: 11px; opacity: 0.55; cursor: default; }
-
-/* ---- Google Translate Element: documented CSS customization ---- */
-.lango-google-element { position: absolute !important; top: -9999px; left: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; }
-body { top: 0 !important; }
-.goog-te-banner-frame, .goog-te-balloon-frame { display: none !important; }
-.goog-te-gadget { font-size: 0 !important; }
-.skiptranslate > iframe { display: none !important; }
-@media (prefers-reduced-motion: reduce) { .lango-spinner { animation: none; } }
-@media (max-width: 480px) {
-  .lango-menu { position: fixed; left: 12px; right: 12px; top: auto; bottom: 12px; max-width: none; }
-}
-`;
+export const LANGO_CSS = "/* Lango switcher styles (one half of the default stylesheet).\n   Optional legacy import - `<Lango>` auto-injects these at runtime.\n   Source of truth: edit this file, then run `npm run build:css`\n   to regenerate `cssText.ts` + `dist/lango.css`. */\n\n:root {\n  --lango-background: #fff;\n  --lango-foreground: #09090b;\n  --lango-border: #e4e4e7;\n  --lango-radius: 12px;\n  --lango-option-hover: #f4f4f5;\n  --lango-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);\n  --lango-font-size: 14px;\n}\n\n.lango-switcher {\n  position: relative;\n  display: inline-block;\n  font-size: var(--lango-font-size);\n  color: var(--lango-foreground);\n}\n\n.lango-trigger {\n  display: inline-flex;\n  align-items: center;\n  gap: 8px;\n  background: var(--lango-background);\n  color: var(--lango-foreground);\n  border: 1px solid var(--lango-border);\n  border-radius: 999px;\n  padding: 8px 14px;\n  cursor: pointer;\n  font: inherit;\n  line-height: 1.2;\n}\n\n.lango-trigger:hover {\n  background: var(--lango-option-hover);\n}\n\n.lango-trigger:focus-visible {\n  outline: 2px solid #09090b;\n  outline-offset: 2px;\n}\n\n.lango-trigger-icon {\n  font-size: 0.8em;\n  opacity: 0.6;\n}\n\n.lango-menu {\n  position: absolute;\n  z-index: 50;\n  top: calc(100% + 6px);\n  left: 0;\n  min-width: 200px;\n  max-width: min(280px, 90vw);\n  max-height: 320px;\n  overflow: auto;\n  margin: 0;\n  padding: 6px;\n  list-style: none;\n  background: var(--lango-background);\n  color: var(--lango-foreground);\n  border: 1px solid var(--lango-border);\n  border-radius: var(--lango-radius);\n  box-shadow: var(--lango-shadow);\n}\n\n.lango-option {\n  display: flex;\n  align-items: center;\n  gap: 8px;\n  padding: 8px 12px;\n  border-radius: calc(var(--lango-radius) - 4px);\n  cursor: pointer;\n}\n\n.lango-option:hover {\n  background: var(--lango-option-hover);\n}\n\n.lango-option:focus-visible {\n  outline: 2px solid #09090b;\n  outline-offset: -2px;\n}\n\n.lango-option-active {\n  font-weight: 600;\n}\n\n.lango-flag {\n  font-size: 1.1em;\n  line-height: 1;\n}\n\n.lango-language-name {\n  flex: 1;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.lango-check {\n  opacity: 0.7;\n}\n\n.lango-spinner {\n  width: 12px;\n  height: 12px;\n  border: 2px solid var(--lango-border);\n  border-top-color: currentColor;\n  border-radius: 50%;\n  animation: lango-spin 0.8s linear infinite;\n}\n\n@keyframes lango-spin {\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n.lango-attribution {\n  padding: 8px 12px 4px;\n  font-size: 11px;\n  opacity: 0.55;\n  cursor: default;\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .lango-spinner {\n    animation: none;\n  }\n}\n\n@media (max-width: 480px) {\n  .lango-menu {\n    position: fixed;\n    left: 12px;\n    right: 12px;\n    top: auto;\n    bottom: 12px;\n    max-width: none;\n  }\n}\n\n/* Google Translate Element overrides (other half of the stylesheet).\n   Documented CSS customization: the widget stays in the DOM (required) but\n   Lango provides the UI. Source of truth: edit this file, then run\n   `npm run build:css` to regenerate `cssText.ts` + `dist/lango.css`. */\n\n.lango-google-element {\n  position: absolute !important;\n  top: -9999px;\n  left: -9999px;\n  width: 1px;\n  height: 1px;\n  overflow: hidden;\n  opacity: 0;\n  pointer-events: none;\n}\n\nbody {\n  top: 0 !important;\n}\n\n.goog-te-banner-frame,\n.goog-te-balloon-frame {\n  display: none !important;\n}\n\n.goog-te-gadget {\n  font-size: 0 !important;\n}\n\n.skiptranslate > iframe {\n  display: none !important;\n}\n";

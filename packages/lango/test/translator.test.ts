@@ -26,7 +26,7 @@ describe("GoogleTranslateElementProvider", () => {
     const combo = document.querySelector<HTMLSelectElement>("select.goog-te-combo")!;
     const spy = vi.spyOn(combo, "dispatchEvent");
     await p.translate("fr");
-    await p.translate("fr"); // duplicate — should no-op
+    await p.translate("fr"); // duplicate - should no-op
     expect(spy).toHaveBeenCalled();
     cleanup();
   });
@@ -60,7 +60,7 @@ describe("GoogleTranslateElementProvider", () => {
     });
     stubWidget(["en"]);
     await expect(p.translate("fr")).rejects.toThrow(/never offered/);
-    // The failed language must NOT be recorded as active — retrying the same
+    // The failed language must NOT be recorded as active - retrying the same
     // language later (the reported "switch away and back" workaround) must work.
     document
       .querySelector("select.goog-te-combo")!

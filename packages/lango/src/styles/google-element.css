@@ -1,0 +1,32 @@
+/* Google Translate Element overrides (other half of the stylesheet).
+   Documented CSS customization: the widget stays in the DOM (required) but
+   Lango provides the UI. Source of truth: edit this file, then run
+   `npm run build:css` to regenerate `cssText.ts` + `dist/lango.css`. */
+
+.lango-google-element {
+  position: absolute !important;
+  top: -9999px;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+body {
+  top: 0 !important;
+}
+
+.goog-te-banner-frame,
+.goog-te-balloon-frame {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  font-size: 0 !important;
+}
+
+.skiptranslate > iframe {
+  display: none !important;
+}

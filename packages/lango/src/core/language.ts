@@ -2,7 +2,7 @@ import type { LanguageMeta } from "../types/index.js";
 
 /**
  * Common language metadata. Codes match Google Translate language codes.
- * Flags are display hints only — a language is not owned by one country.
+ * Flags are display hints only - a language is not owned by one country.
  * Hide them with <LanguageSwitcher showFlags={false} />.
  */
 export const LANGUAGE_META: Record<string, LanguageMeta> = {

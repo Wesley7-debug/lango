@@ -18,7 +18,7 @@ export function writeStoredLanguage(language: string): void {
   try {
     window.localStorage.setItem(STORAGE_KEY, language);
   } catch {
-    // private mode / quota — persistence is best-effort, never fatal
+    // private mode / quota - persistence is best-effort, never fatal
   }
 }
 

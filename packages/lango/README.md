@@ -4,7 +4,7 @@
 
 **Simple, customizable website translation for React.**
 
-[![npm version](https://img.shields.io/npm/v/lango?style=flat-square)](https://www.npmjs.com/package/lango)
+[![npm version](https://img.shields.io/npm/v/lango-i18n?style=flat-square)](https://www.npmjs.com/package/lango-i18n)
 [![license: MIT](https://img.shields.io/badge/license-MIT-black?style=flat-square)](../../LICENSE)
 
 Powered by Google. Built for developers. Made by [@slycodez](https://x.com/slycodez).
@@ -14,12 +14,12 @@ Powered by Google. Built for developers. Made by [@slycodez](https://x.com/slyco
 ---
 
 ```bash
-npm install lango
+npm install lango-i18n
 ```
 
 ```tsx
-import { Lango, LanguageSwitcher } from "lango";
-// No CSS import needed — pre-styled, Tailwind-ready.
+import { Lango, LanguageSwitcher } from "lango-i18n";
+// No CSS import needed - pre-styled, Tailwind-ready.
 
 export function App() {
   return (
@@ -34,8 +34,8 @@ export function App() {
 ## Features
 
 - `<Lango>` provider with language state + persistence
-- `<LanguageSwitcher>` — pre-styled, accessible, Tailwind-customizable dropdown
-- `useLango()` — headless API for any custom UI
+- `<LanguageSwitcher>` - pre-styled, accessible, Tailwind-customizable dropdown
+- `useLango()` - headless API for any custom UI
 - Zero CSS imports: styles auto-inject on mount (`ensureLangoStyles()`)
 - Stable class names (`.lango-switcher`, `.lango-trigger`, …) + `--lango-*` variables
 - SSR-safe (no `window`/`localStorage` access during render)
@@ -44,15 +44,29 @@ export function App() {
 ## Installation
 
 ```bash
-npm install lango
+npm install lango-i18n
 ```
 
-No stylesheet import required. (The old `import "lango/styles.css"` still works — it's now optional.)
+```bash
+pnpm add lango-i18n
+```
+
+```bash
+yarn add lango-i18n
+```
+
+```bash
+bun add lango-i18n
+```
+
+All four install the same package - zero runtime dependencies, React is a peer
+(`>=16.8`). No stylesheet import required. (The old `import "lango-i18n/styles.css"`
+still works - it's now optional.)
 
 ## Quick Start
 
 ```tsx
-import { Lango, LanguageSwitcher } from "lango";
+import { Lango, LanguageSwitcher } from "lango-i18n";
 
 function App() {
   return (
@@ -76,7 +90,7 @@ function App() {
 `<LanguageSwitcher>` props: `showFlags` (default true), `showNativeNames`
 (default true), `className`, `triggerClassName`, `menuClassName`,
 `optionClassName` (all accept Tailwind utilities), `showAttribution`
-(default true — keep on for Google compliance).
+(default true - keep on for Google compliance).
 
 ## Headless usage
 
@@ -123,7 +137,7 @@ window.__LANGO_NO_AUTO_CSS__ = true;
 
 Default provider = official Google Translate Element. No credentials in the
 browser. Keep `showAttribution` on (Google requires attribution). What Lango
-hides — and how: the raw Google dropdown is visually hidden with static CSS
+hides - and how: the raw Google dropdown is visually hidden with static CSS
 positioning; no `setInterval` DOM deletion, no reliance on Google internals.
 Google may inject a top banner iframe in some locales; Lango neutralizes it
 with documented CSS (`body{top:0!important}` + hiding `.goog-te-banner-frame`).
@@ -147,18 +161,7 @@ Button/listbox semantics, `aria-expanded`, `aria-selected`, keyboard
 - Offline/ad-blocker: content stays in the original language; `error` is set.
   Allow `translate.google.com` and retry.
 - Unsupported code passed to `setLanguage`: ignored + console warning.
-- SSR: safe — browser APIs only touched in effects/event handlers.
-
-## Run / Build / Publish
-
-```bash
-# from the monorepo root
-npm install
-npm run dev:website          # demo site → http://localhost:5173
-npm run build --workspace=lango
-npm run test --workspace=lango
-cd packages/lango && npm publish --access public
-```
+- SSR: safe - browser APIs only touched in effects/event handlers.
 
 Repo: [Wesley7-debug/lango](https://github.com/Wesley7-debug/lango) · Author: [@slycodez](https://x.com/slycodez)
 

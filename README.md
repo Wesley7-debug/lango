@@ -6,8 +6,9 @@
 
 Powered by Google. Built for developers.
 
-[![npm version](https://img.shields.io/npm/v/lango?style=flat-square)](https://www.npmjs.com/package/lango)
+[![npm version](https://img.shields.io/npm/v/lango-i18n?style=flat-square)](https://www.npmjs.com/package/lango-i18n)
 [![license: MIT](https://img.shields.io/badge/license-MIT-black?style=flat-square)](./LICENSE)
+[![ci](https://img.shields.io/github/actions/workflow/status/Wesley7-debug/lango/ci.yml?style=flat-square&label=ci)](https://github.com/Wesley7-debug/lango/actions)
 [![react](https://img.shields.io/badge/react-%3E%3D16.8-black?style=flat-square&logo=react)](https://react.dev)
 [![tailwind ready](https://img.shields.io/badge/tailwind-ready-black?style=flat-square&logo=tailwindcss)](./packages/lango)
 
@@ -18,12 +19,12 @@ Powered by Google. Built for developers.
 ---
 
 ```bash
-npm install lango
+npm install lango-i18n
 ```
 
 ```tsx
-import { Lango, LanguageSwitcher } from "lango";
-// No CSS import needed — Lango is pre-styled out of the box.
+import { Lango, LanguageSwitcher } from "lango-i18n";
+// No CSS import needed - Lango is pre-styled out of the box.
 
 function App() {
   return (
@@ -41,7 +42,7 @@ function App() {
 |---|---|
 | 🎯 **One-line setup** | Provider + switcher, no dashboard, no API key |
 | 💅 **Pre-styled, Tailwind-ready** | Zero CSS imports. Restyle with `triggerClassName`, `menuClassName`, `optionClassName` |
-| 🧩 **Headless API** | `useLango()` for any custom UI — select, buttons, command palette |
+| 🧩 **Headless API** | `useLango()` for any custom UI - select, buttons, command palette |
 | 💾 **Persistent** | Remembers language in `localStorage`, detects browser language |
 | ♿ **Accessible** | Button/listbox semantics, full keyboard support, focus-visible states |
 | 🔒 **Google-compliant** | Official Translate Element, attribution preserved, no secrets in the browser |
@@ -49,16 +50,32 @@ function App() {
 
 ## 🚀 Quick Start
 
-**1. Install**
+**1. Install - pick your package manager**
 
 ```bash
-npm install lango
+npm install lango-i18n
 ```
+
+```bash
+pnpm add lango-i18n
+```
+
+```bash
+yarn add lango-i18n
+```
+
+```bash
+bun add lango-i18n
+```
+
+> The published package is identical on all four - zero runtime dependencies,
+> just a React peer dependency. This repo develops with npm
+> (`package-lock.json`); see [CHANGELOG](./CHANGELOG.md) for the v1.2.0 notes.
 
 **2. Wrap your app**
 
 ```tsx
-import { Lango, LanguageSwitcher } from "lango";
+import { Lango, LanguageSwitcher } from "lango-i18n";
 
 function App() {
   return (
@@ -71,7 +88,7 @@ function App() {
 ```
 
 > **No stylesheet import required.** `<Lango>` auto-injects its default styles on mount.
-> The legacy `import "lango/styles.css"` still works but is optional.
+> The legacy `import "lango-i18n/styles.css"` still works but is optional.
 
 **3. Restyle with Tailwind (optional)**
 
@@ -83,7 +100,7 @@ function App() {
 />
 ```
 
-Or plain CSS — class names are stable (`.lango-switcher`, `.lango-trigger`, `.lango-menu`, `.lango-option`, …) with `--lango-*` variables:
+Or plain CSS - class names are stable (`.lango-switcher`, `.lango-trigger`, `.lango-menu`, `.lango-option`, …) with `--lango-*` variables:
 
 ```css
 :root {
@@ -136,7 +153,7 @@ function CustomSelector() {
 | `triggerClassName` | `""` | Tailwind classes for the button |
 | `menuClassName` | `""` | Tailwind classes for the dropdown |
 | `optionClassName` | `""` | Tailwind classes for each option |
-| `showAttribution` | `true` | Keep on — required by Google terms |
+| `showAttribution` | `true` | Keep on - required by Google terms |
 
 ## 💻 Run the demo site
 
@@ -147,7 +164,7 @@ The docs + live demo live in `apps/website` (Vite + React + Tailwind + Sora).
 git clone https://github.com/Wesley7-debug/lango.git
 cd lango
 
-# 2. Install (monorepo — installs everything)
+# 2. Install (monorepo - installs everything)
 npm install
 
 # 3. Start the site
@@ -158,13 +175,13 @@ npm run dev:website
 | Command | What it does |
 |---|---|
 | `npm run dev:website` | Start demo site (port `5173`) |
-| `npm run build --workspace=lango` | Build the `lango` package → `packages/lango/dist/` |
+| `npm run build --workspace=lango-i18n` | Build the `lango-i18n` package → `packages/lango/dist/` |
 | `npm run build --workspace=lango-website` | Production build of the site → `apps/website/dist/` |
 | `npm run preview --workspace=lango-website` | Preview the production build |
-| `npm run test --workspace=lango` | Run package tests (vitest) |
+| `npm run test --workspace=lango-i18n` | Run package tests (vitest) |
 | `npm run build` | Build all workspaces |
 
-> After editing `packages/lango/src`, rebuild it (`npm run build --workspace=lango`) and restart Vite so the site picks up the change.
+> After editing `packages/lango/src`, rebuild it (`npm run build --workspace=lango-i18n`) and restart Vite so the site picks up the change.
 
 ## 📦 Publish
 
@@ -181,7 +198,7 @@ cd packages/lango
 npm publish --access public
 ```
 
-Requirements: `npm login`, and the `dist/` output (`index.js`, `index.cjs`, `index.d.ts`, `lango.css`) is generated by `npm run build` — never commit it by hand.
+Requirements: `npm login`, and the `dist/` output (`index.js`, `index.cjs`, `index.d.ts`, `lango.css`) is generated by `npm run build` - never commit it by hand.
 
 ## 🔌 Google integration
 
@@ -193,7 +210,7 @@ For Google Cloud Translation API: build a `TranslationProvider` that calls **you
 
 - **Switched language, page didn't translate** → check DevTools Network for `translate.google.com/translate_a/element.js`. Ad-blockers / Brave Shields block it. Disable + hard refresh.
 - **`error` from `useLango()` is set** → Google script failed (offline / blocked). Content stays readable in the original language.
-- **Stale demo after editing the package** → `npm run build --workspace=lango`, then restart `npm run dev:website`.
+- **Stale demo after editing the package** → `npm run build --workspace=lango-i18n`, then restart `npm run dev:website`.
 - **Unsupported code in `setLanguage`** → ignored with a console warning, app keeps working.
 
 ## 👤 Credits
@@ -203,8 +220,8 @@ Made by **[@slycodez](https://x.com/slycodez)**.
 - 🐙 GitHub: [Wesley7-debug/lango](https://github.com/Wesley7-debug/lango)
 - 𝕏 Twitter/X: [@slycodez](https://x.com/slycodez)
 
-Contributions welcome — open an issue or PR.
+Contributions welcome - open an issue or PR.
 
 ## 📄 License
 
-MIT — see [LICENSE](./LICENSE).
+MIT - see [LICENSE](./LICENSE).
