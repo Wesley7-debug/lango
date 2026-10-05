@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/react";
 import { Lango } from "lango-i18n";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
@@ -17,6 +18,7 @@ export default function App() {
         <SiteHeader />
         {route.page === "docs" ? <DocsPage /> : <HomePage />}
         <SiteFooter />
+        <Analytics />
       </div>
     </Lango>
   );
