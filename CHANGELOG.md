@@ -3,6 +3,13 @@
 All notable changes to Lango are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.1]
+
+### Fixed
+
+- Removed the maintainer-oriented "Run / Build / Publish" section from the
+  published `lango-i18n` README (it now ships the clean user-facing docs only)
+
 ## [1.2.0]
 
 ### Added

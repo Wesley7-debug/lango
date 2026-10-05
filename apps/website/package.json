@@ -1,10 +1,11 @@
 {
   "name": "lango-website",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run build --workspace=lango-i18n",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview"
   },

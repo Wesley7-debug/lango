@@ -11,7 +11,7 @@ export function HomePage() {
       <section className="pb-10 pt-16 text-center sm:pt-24">
         <p className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-stone-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest dark:border-neutral-700 dark:bg-stone-950">
           <span className="h-2 w-2 rounded-full bg-stone-900 dark:bg-stone-100" />
-          v1.2.0 - Powered by Google
+          v1.2.1 - Powered by Google
         </p>
         <h1 className="mx-auto mt-6 max-w-4xl text-5xl font-extrabold leading-[1.02] tracking-tight sm:text-7xl">
           Translate your website.
